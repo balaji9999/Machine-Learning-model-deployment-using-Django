@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block main %}
+<!-- Modal -->
+<div class="modal fade " id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Prediction Results</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5>Prediction Input:</h5>
+                <div>Firstname: <span id="fn"></span></div>
+                <div>Lastname: <span id="ln"></span></div>
+                <div>Dependents: <span id="de"></span></div>
+                <div>ApplicantIncome: <span id="ai"></span></div>
+                <div>CoapplicantIncome: <span id="cai"></span></div>
+                <div>LoanAmount: <span id="la"></span></div>
+                <div>Loan_Amount_Term: <span id="lat"></span></div>
+                <div>Credit_History: <span id="ch"></span></div>
+                <div>Gender: <span id="ge"></span></div>
+                <div>Married: <span id="ma"></span></div>
+                <div>Education: <span id="ed"></span></div>
+                <div>Self_Employed: <span id="se"></span></div>
+                <div>Property_Area: <span id="pa"></span></div>
+                <h5 class="pt-3">Prediction Classification:</h5>
+                <div id="prediction"></div> 
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a class="btn btn-primary" href="/results" role="button">View DB</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pt-5 ">
+    <div class="row justify-content-md-center">
+        <div class="col-md-4">
+            <h2 class="text-primary">Bank Loan Prediction</h2>
+            <form action="" id="post-form">
+                {% csrf_token %}
+               
+                <div class="form-group">
+                    <label for="sepal_length">Name</label>
+                    <input type="text" step="0.1" class="form-control" id="Lastname" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="sepal_length">Dependents</label>
+                    <input type="number" step="0.1" class="form-control" id="Dependents" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="sepal_length">ApplicantIncome</label>
+                    <input type="number" step="0.1" class="form-control" id="ApplicantIncome" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="sepal_length">CoapplicantIncome</label>
+                    <input type="number" step="0.1" class="form-control" id="CoapplicantIncome" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="sepal_length">LoanAmount</label>
+                    <input type="number" step="0.1" class="form-control" id="LoanAmount" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="sepal_length">Loan_Amount_Term</label>
+                    <input type="number" step="0.1" class="form-control" id="Loan_Amount_Term" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="sepal_length">Credit_History</label>
+                    <input type="number" step="0.1" class="form-control" id="Credit_History" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="Sepal Width">Gender</label>
+                    <select  step="0.1" class="form-control" id="Gender" placeholder="" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="petal_length">Married</label>
+                    <select  step="0.1" class="form-control" id="Married" placeholder="" required>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="petal_length">Education</label>
+                    <select  step="0.1" class="form-control" id="Education" placeholder="" required>
+                        <option value="Graduate">Graduate</option>
+                        <option value="Not_Graduate">Not_Graduate</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="petal_length">Self_Employed</label>
+                    <select  step="0.1" class="form-control" id="Self_Employed" placeholder="" required>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="petal_width">Property_Area</label>
+                    <select  step="0.1" class="form-control" id="Property_Area" placeholder="" required>
+                        <option value="Rural">Rural</option>
+                        <option value="Semiurban">Semiurban</option>
+                        <option value="Urban">Urban</option>
+                    </select>
+                </div>
+                <button type="submit" value="Submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on('submit', '#post-form',function(e){
+        e.preventDefault();
+        $.ajax({
+            type:'POST',
+            url:'{% url "predict:submit_prediction" %}',
+            data:{
+                Firstname:$('#Firstname').val(),
+                Lastname:$('#Lastname').val(),
+                Dependents:$('#Dependents').val(),
+                ApplicantIncome:$('#ApplicantIncome').val(),
+                CoapplicantIncome:$('#CoapplicantIncome').val(),
+                LoanAmount:$('#LoanAmount').val(),
+                Loan_Amount_Term:$('#Loan_Amount_Term').val(),
+                Credit_History:$('#Credit_History').val(),
+                Gender:$('#Gender').val(),
+                Married:$('#Married').val(),
+                Education:$('#Education').val(),
+                Self_Employed:$('#Self_Employed').val(),
+                Property_Area:$('#Property_Area').val(),
+            
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                action: 'post'
+            },
+            success:function(json) {
+                document.forms["post-form"].reset();
+                document.getElementById("prediction").innerHTML = json['result']
+                document.getElementById("fn").innerHTML = json['Firstname']
+                document.getElementById("ln").innerHTML = json['Lastname']
+                document.getElementById("de").innerHTML = json['Dependents']
+                document.getElementById("ai").innerHTML = json['ApplicantIncome']
+                document.getElementById("cai").innerHTML = json['CoapplicantIncome']
+                document.getElementById("la").innerHTML = json['LoanAmount']
+                document.getElementById("lat").innerHTML = json['Loan_Amount_Term']
+                document.getElementById("ch").innerHTML = json['Credit_History']
+                document.getElementById("ge").innerHTML = json['Gender']
+                document.getElementById("ma").innerHTML = json['Married']
+                document.getElementById("ed").innerHTML = json['Education']
+                document.getElementById("se").innerHTML = json['Self_Employed']
+                document.getElementById("pa").innerHTML = json['Property_Area']
+              
+            },
+            error : function(xhr,errmsg,err) {
+
+            }
+        });
+    })
+</script>
+
+{% endblock %}
+
